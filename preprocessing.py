@@ -1,10 +1,6 @@
 import torch
 import torchaudio
-import numpy as np
-from torch.utils.data import Dataset, DataLoader
-import matplotlib.pyplot as plt
-from hparams import Hparams
-from tokenizers import RPT_Tokenizer
+import os
 
 
 def load_data(hparams, split='|'):
@@ -22,12 +18,11 @@ def data_split(wavname_and_transcripts, hparams):
 
 def load_wav(wavpath, hparams):
     waveform, sample_rate = torchaudio.load(wavpath)
-    if hparams.resample_wavs and (hparams.target_sample_rate != sample_rate):
+    if hparams.allow_resample == True and hparams.target_sample_rate != sample_rate:
+        print('mismatched sample rate of {} found in {}, resampling...'.format(sample_rate, wavpath))
         waveform = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=hparams.target_sample_rate)(waveform)
-        return waveform
-    
-    assert sample_rate == hparams.target_sample_rate, "wav sample rate of {}Hz does not match target sample rate of {}Hz! Try setting resample_wavs=True".format(sample_rate, hparams.target_sample_rate)
-
+        print('Done.')
+    assert sample_rate == hparams.target_sample_rate, "wav sample rate of {}Hz does not match target sample rate of {}Hz! If this is an outlier, set allow_resample to True in hparams. If this happens for every file, run resample_dataset.".format(sample_rate, hparams.target_sample_rate)
     return waveform
 
 
@@ -56,45 +51,7 @@ def max_mel_len(hparams):
     return max(set)
 
 
-class RPT_Dataset(Dataset):
-    """
-    Core Dataset class. Description to be updated.
-    """
-    def __init__(self, datalist, hparams):
-        self.datalist = datalist
-        self.hparams = hparams
-        self.tokenizer = RPT_Tokenizer(hparams)
-
-    def __len__(self):
-        return len(self.datalist)
-
-    def __getitem__(self, idx):
-        wavpath = self.hparams.wavfolder + "\\" + self.datalist[idx][0]
-        wav = load_wav(wavpath, hparams=self.hparams)
-        mel = wav_to_mel(waveform=wav, hparams=self.hparams)
-
-        text = self.datalist[idx][1]
-
-        return text, mel
-
-
-class RPT_Dataloader(DataLoader):
-    def __init__(self, hparams):
-        super().__init__()
-        self.hparams = hparams
-        pass
-
-
-
-# biglist = load_data(filepath=hparams.transcriptpath)
-
-# traindata, valdata = trainsplit(wavname_and_transcripts=biglist, hparams=hparams)
-
-# testloader = PrimeDataset(datalist=traindata, hparams=hparams)
-
-# mel, text = testloader[22]
-
-# print(text)
-
-# plt.figure()
-# plt.imshow(mel.numpy(), cmap='Blues')
+def resample_datset(hparams):
+    files = os.listdir(hparams.wavfolder)
+    #will be finished as soon as a more efficient method of resampling that allows for finer control is found
+    pass

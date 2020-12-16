@@ -12,7 +12,7 @@ class Hparams:
 
 
     target_sample_rate: int = 22050
-    resample_wavs: bool = True
+    allow_resample: bool = False
     n_mels: int = 80
     
     

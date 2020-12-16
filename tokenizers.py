@@ -2,7 +2,8 @@ from unidecode import unidecode
 import re
 import torch
 import torch.nn.functional as F
-import datasetprep
+from preprocessing import load_data
+
 
 def build_char_mapping_idx(charset):
     mapping_idx = {char:idx for idx, char in enumerate(charset)}
@@ -88,7 +89,6 @@ def tokenize_chars(text:str):
     return text
 
 
-
 def tokenize_phones():
     raise NotImplementedError
 
@@ -105,8 +105,8 @@ class RPT_Tokenizer():
     """
     def __init__(self, hparams):
         self.hparams = hparams
-        self.charset = token_list(datasetprep.load_data(hparams))
-        self.max_len = dataset_max_len(datasetprep.load_data(hparams))
+        self.charset = token_list(load_data(hparams))
+        self.max_len = dataset_max_len(load_data(hparams))
         self.mapping_idx = build_char_mapping_idx(self.charset)
 
     def tokenize(self, text):

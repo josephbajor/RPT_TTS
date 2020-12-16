@@ -27,11 +27,8 @@ class load_hparams():
         self.filepath = filepath
         
     
-    
 def data_pathedit(filepath, outpath, wavfolder):
     pass
-
-
 
 
 def MelGANdatasplit(path, tsplit=0.9):
@@ -61,7 +58,6 @@ def MelGANdatasplit(path, tsplit=0.9):
     valfile.close()
 
 
-
 def batch_resample(path, sample_rate):
     '''
     WARNING: This results in an increased filesize
@@ -75,7 +71,6 @@ def batch_resample(path, sample_rate):
         print(f'resampling {file}...')
     print('Done.')
 
-# DEPRICATED
 
 # def batch_resample(path, sample_rate):
 #     files = os.listdir(path)
@@ -84,14 +79,3 @@ def batch_resample(path, sample_rate):
 #         soundfile.write(data=data, file=(path+'//'+file), samplerate=sample_rate, dtype='float32')
 #         print(f'resampled {file}')
 #     print('Done.')
-
-
-
-# =============================================================================
-# dataloader:
-#     need function to convert audio to mels and save to disk
-#     take in train/val split var and output both training and validation sets
-#     anything random must be tied to seed var with user control
-# =============================================================================
-
-  
