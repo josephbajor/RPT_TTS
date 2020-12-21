@@ -1,6 +1,9 @@
+from numpy.core.function_base import _logspace_dispatcher
 import torch
 import torchaudio
 import os
+import soundfile
+import librosa
 
 
 def load_data(hparams, split='|'):
@@ -26,7 +29,7 @@ def load_wav(wavpath, hparams):
     return waveform
 
 
-def wav_to_mel(waveform, hparams):
+def wav_to_mel(waveform, max_mel_len, hparams):
     mel = torchaudio.transforms.MelSpectrogram(sample_rate=hparams.target_sample_rate, n_mels=hparams.n_mels,  hop_length=hparams.hop_length, pad=0)(waveform)
     #mel = mel.log2().squeeze() OLD PROCESS
     with torch.no_grad():
@@ -52,6 +55,23 @@ def max_mel_len(hparams):
 
 
 def resample_datset(hparams):
+    """
+    Function to resample the provided sound files into wavs with the targeted sr provided in hparams.
+    A folder for the resampled wavs will be created in the parent directory of the provided wav folder.
+    """
     files = os.listdir(hparams.wavfolder)
-    #will be finished as soon as a more efficient method of resampling that allows for finer control is found
-    pass
+    pathmod = hparams.wavfolder.split(sep='\\')
+    pathmod[-1] += "_{}".format(hparams.target_sample_rate)
+    newfolder = "\\".join(pathmod)
+    assert not os.path.exists(newfolder), "The folder {} already exists! Has the dataset already been converted to this sample rate?".format(pathmod[-1])
+    os.mkdir(newfolder)
+
+    for file in files:
+        loadpath = hparams.wavfolder + "\\" + file
+        savepath = newfolder + "\\" + file
+        print("Resampling {}...".format(file))
+        wav, sr = librosa.load(loadpath, sr=hparams.target_sample_rate, mono=True)
+        subtype = soundfile.info(loadpath, verbose=False).subtype
+        soundfile.write(savepath, wav, samplerate=sr, subtype=subtype)
+
+    print("Done.")
