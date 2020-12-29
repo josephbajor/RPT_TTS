@@ -5,6 +5,10 @@ from tokenizers import RPT_Tokenizer
 from preprocessing import data_split, load_data, load_wav, wav_to_mel, max_mel_len
 
 
+def RPT_collate():
+    pass
+
+
 class RPT_Dataset(Dataset):
     """
     Core Dataset class. Description to be updated.
@@ -13,7 +17,7 @@ class RPT_Dataset(Dataset):
         self.hparams = hparams
         self.datalist = load_data(self.hparams)
         self.tokenizer = RPT_Tokenizer(self.hparams)
-        self.max_mel_len = max_mel_len(self.hparams)
+        #self.max_mel_len = max_mel_len(self.hparams)
 
     def __len__(self):
         return len(self.datalist)
@@ -21,20 +25,13 @@ class RPT_Dataset(Dataset):
     def __getitem__(self, idx):
         wavpath = self.hparams.wavfolder + "\\" + self.datalist[idx][0]
         wav = load_wav(wavpath, hparams=self.hparams)
-        mel = wav_to_mel(waveform=wav, max_mel_len=self.max_mel_len, hparams=self.hparams)
+        mel = wav_to_mel(waveform=wav, hparams=self.hparams)
         
 
         text = self.datalist[idx][1]
         tokens = self.tokenizer.tokenize(text)
 
         return tokens, mel
-
-
-class RPT_Dataloader(DataLoader):
-    def __init__(self, hparams):
-        super().__init__()
-        self.hparams = hparams
-        pass
 
 
 

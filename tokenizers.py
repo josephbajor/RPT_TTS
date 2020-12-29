@@ -106,14 +106,15 @@ class RPT_Tokenizer():
     def __init__(self, hparams):
         self.hparams = hparams
         self.charset = token_list(load_data(hparams))
-        self.max_len = dataset_max_len(load_data(hparams))
+        #move padding to dataloader collate_fn, pad based on max in batch not max in dataset
+        #self.max_len = dataset_max_len(load_data(hparams))
         self.mapping_idx = build_char_mapping_idx(self.charset)
 
     def tokenize(self, text):
         text = text_cleaner(text, self.hparams.remove_symbols, self.hparams.custom_tokens)
         text = tokenize_chars(text)
         text = char_to_idx(text, self.mapping_idx)
-        pad_len = self.max_len - len(text)
+        #pad_len = self.max_len - len(text)
         text = torch.LongTensor(text)
-        text = F.pad(text, (0, (pad_len)), mode='constant')
+        #text = F.pad(text, (0, (pad_len)), mode='constant')
         return text

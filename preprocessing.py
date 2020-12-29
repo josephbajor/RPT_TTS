@@ -29,7 +29,7 @@ def load_wav(wavpath, hparams):
     return waveform
 
 
-def wav_to_mel(waveform, max_mel_len, hparams):
+def wav_to_mel(waveform, hparams):
     mel = torchaudio.transforms.MelSpectrogram(sample_rate=hparams.target_sample_rate, n_mels=hparams.n_mels,  hop_length=hparams.hop_length, pad=0)(waveform)
     #mel = mel.log2().squeeze() OLD PROCESS
     with torch.no_grad():
@@ -49,7 +49,6 @@ def max_mel_len(hparams):
         wavpath = hparams.wavfolder + "\\" + data[i][0]
         wav = load_wav(wavpath, hparams)
         mel = wav_to_mel(wav, hparams)
-        print(mel.shape[1])
         set.append(mel.shape[1])
     return max(set)
 
