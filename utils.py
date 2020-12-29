@@ -20,15 +20,6 @@ def pppdata_cleaner(filepath, outputpath):
         newfile.writelines(line)
         
     newfile.close()
-    
-    
-class load_hparams():
-    def __init__(self, filepath):
-        self.filepath = filepath
-        
-    
-def data_pathedit(filepath, outpath, wavfolder):
-    pass
 
 
 def MelGANdatasplit(path, tsplit=0.9):
@@ -70,12 +61,3 @@ def batch_resample(path, sample_rate):
         torchaudio.save(path + '//' + file, data, sample_rate)
         print(f'resampling {file}...')
     print('Done.')
-
-
-# def batch_resample(path, sample_rate):
-#     files = os.listdir(path)
-#     for file in files:
-#         data = librosa.load(path=(path+'//'+file), sr=sample_rate)
-#         soundfile.write(data=data, file=(path+'//'+file), samplerate=sample_rate, dtype='float32')
-#         print(f'resampled {file}')
-#     print('Done.')
